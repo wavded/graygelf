@@ -1,11 +1,9 @@
 {
   "name": "graygelf",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "GrayLog2 made simple",
   "main": "index.js",
-  "scripts": {
-    "test": "mocha"
-  },
+  "scripts": { "test": "mocha" },
   "keywords": [
     "graylog2",
     "gelf"
