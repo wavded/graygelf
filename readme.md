@@ -43,7 +43,7 @@ gg.debug(...)  // 7
 
 ## Chunked Messages
 
-GrayGelf supports sending chunked automatically messages when messages get above a certain size:
+GrayGelf automatically sends chunked messages when a message gets above a certain size:
 
 ```js
 gg.chunkSize = 10 // in bytes; defaults to 1240
