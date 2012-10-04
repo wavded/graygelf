@@ -35,7 +35,7 @@ chunkSize: (size of chunked messages in bytes, defaults to 1240)
 GrayGelf maps the syslog levels to functions as follows:
 
 ```js
-logger.emerg(...)  // 0
+logger.emerg('short message', 'detailed message')  // 0
 logger.alert(...)  // 1
 logger.crit(...)   // 2
 logger.error(...)  // 3
@@ -44,6 +44,8 @@ logger.notice(...) // 5
 logger.info(...)   // 6
 logger.debug(...)  // 7
 ```
+
+Each logger function takes two parameters which can be of any type but typically `(string, object)`.
 
 ### Chunked Messages
 
