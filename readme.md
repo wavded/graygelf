@@ -1,6 +1,6 @@
 # GrayGelf [![Build Status](https://secure.travis-ci.org/wavded/graygelf.png)](http://travis-ci.org/wavded/graygelf)
 
-GrayLog2 GELF streaming, chunking, and more.  A complete GELF implementation including tests.
+GrayLog2 GELF logging, streaming, chunking, and more.  Includes client and server implementations.  AFAIK a complete GELF implementation.  Node Core style server and client.
 
 ## Install
 
@@ -8,16 +8,20 @@ GrayLog2 GELF streaming, chunking, and more.  A complete GELF implementation inc
 npm install graygelf
 ```
 
-## Usage
+## Client (i.e. as a logging tool)
+
+### Usage
 
 ```js
-var gg = require('graygelf')({ host: 'graylog.server.local', facility: 'sample_facility'})
+var graygelf = require('graygelf')
+var logger = graygelf.createClient({ host: 'graylog.server.local', facility: 'sample_facility'})
+logger.on('error', console.error) // is an EventEmitter
 
-gg.info('Howdy GrayLog')
-gg.error('oh no', new Error('bad news'))
+logger.info('Howdy GrayLog')
+logger.error('oh no', new Error('bad news'))
 ```
 
-## Options
+### Available Options
 
 ```
 host: (graylog host)
@@ -26,37 +30,65 @@ facility: (graylog facility)
 chunkSize: (size of chunked messages in bytes, defaults to 1240)
 ```
 
-## Syslog Levels
+### Syslog Levels
 
 GrayGelf maps the syslog levels to functions as follows:
 
 ```js
-gg.emerg(...)  // 0
-gg.alert(...)  // 1
-gg.crit(...)   // 2
-gg.error(...)  // 3
-gg.warn(...)   // 4
-gg.notice(...) // 5
-gg.info(...)   // 6
-gg.debug(...)  // 7
+logger.emerg(...)  // 0
+logger.alert(...)  // 1
+logger.crit(...)   // 2
+logger.error(...)  // 3
+logger.warn(...)   // 4
+logger.notice(...) // 5
+logger.info(...)   // 6
+logger.debug(...)  // 7
 ```
 
-## Chunked Messages
+### Chunked Messages
 
 GrayGelf automatically sends chunked messages when a message gets above a certain size:
 
 ```js
-gg.chunkSize = 10 // in bytes; defaults to 1240
-gg.emerg('some thing more than 10 bytes', 'more detail')
+logger.chunkSize = 10 // in bytes; defaults to 1240
+logger.emerg('some thing more than 10 bytes', 'more detail')
 ```
 
-## Streaming Messages
+### Streaming Messages
 
 Each log level has an associated writeable stream `.stream` that can be used to pipe data into
 
 ```js
-fs.createReadStream('./data').pipe(gg.info.stream)
+fs.createReadStream('./data').pipe(logger.info.stream)
 ```
+
+## Server (make your own GrayLog server or intercept messages to GrayLog)
+
+### Usage (callback style)
+
+```js
+var graygelf = require('graygelf')
+var server = graygelf.createServer(function (msg) {
+  console.log('recieved message', msg)
+})
+server.on('error', console.error)
+server.listen(12201)
+```
+
+### Usage (evented style)
+
+```js
+var graygelf = require('graygelf')
+var server = graygelf.createServer().listen() // defaults to GrayLog2 port 12201
+server.on('message', function (msg) {
+  console.log(received message', msg)
+})
+server.on('error', console.error)
+```
+
+### Message Support
+
+GrayGelf handles zlib, gzip and chunked messages when a message gets above a certain size:
 
 ## License
 

@@ -5,18 +5,18 @@ var LOG_LEVELS = ['emerg','alert','crit','error','warn','notice','info','debug']
 
 suite('general', function () {
   test('exports a single function', function () {
-    assert.equal(typeof graygelf, 'function')
+    assert.equal(typeof graygelf.client, 'function')
   })
 
   test('defaults to localhost:12201 and GELF facility', function () {
-    var gg = graygelf()
+    var gg = graygelf.client()
     assert.equal(gg.graylogHost, 'localhost')
     assert.equal(gg.graylogPort, 12201)
     assert.equal(gg.facility, 'GELF')
   })
 
   test('accepts to host port and facility', function () {
-    var gg = graygelf({ host: 'graylog.test.local', port: 32323, facility: 'test_facility' })
+    var gg = graygelf.client({ host: 'graylog.test.local', port: 32323, facility: 'test_facility' })
     assert.equal(gg.graylogHost, 'graylog.test.local')
     assert.equal(gg.graylogPort, 32323)
     assert.equal(gg.facility, 'test_facility')
@@ -24,7 +24,7 @@ suite('general', function () {
 })
 
 suite('level setups', function () {
-  var gg = graygelf()
+  var gg = graygelf.client()
 
   test('sets up methods for every syslog level', function () {
     LOG_LEVELS.forEach(function (level) {
@@ -42,7 +42,7 @@ suite('level setups', function () {
 })
 
 suite('gelf messages', function () {
-  var gg = graygelf({ host: 'graylog.test.local', port: 32323, facility: 'test_facility' })
+  var gg = graygelf.client({ host: 'graylog.test.local', port: 32323, facility: 'test_facility' })
 
   test('sets up proper gelf message', function () {
     var gelf = gg._prepJson(0, 'my message', { addn: 'data', _extra: 'field', _id: '2323232323' })
@@ -90,7 +90,7 @@ suite('gelf messages', function () {
 })
 
 suite('error messages', function () {
-  var gg = graygelf()
+  var gg = graygelf.client()
 
   test('emit errors on udp messages', function () {
     var err = 'oh no';
