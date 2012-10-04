@@ -81,14 +81,14 @@ server.listen(12201)
 var graygelf = require('graygelf')
 var server = graygelf.createServer().listen() // defaults to GrayLog2 port 12201
 server.on('message', function (msg) {
-  console.log(received message', msg)
+  console.log('received message', msg)
 })
 server.on('error', console.error)
 ```
 
 ### Message Support
 
-GrayGelf handles zlib, gzip and chunked messages when a message gets above a certain size:
+GrayGelf handles `zlib`, `gzip` and chunked messages when a message gets above a certain size.
 
 ## License
 
