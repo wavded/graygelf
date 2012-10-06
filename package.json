@@ -1,14 +1,16 @@
 {
   "name": "graygelf",
   "version": "0.2.0",
-  "description": "GrayLog2 made simple",
+  "description": "Fully compliant GELF/Graylog2 client and server",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
   "keywords": [
     "graylog2",
-    "gelf"
+    "gelf",
+    "client",
+    "server"
   ],
   "author": "Marc Harter <wavded@gmail.com>",
   "license": "MIT",
@@ -17,6 +19,5 @@
   },
   "engines": {
     "node": ">= 0.8.0"
-  },
-  "dependencies": {}
+  }
 }
