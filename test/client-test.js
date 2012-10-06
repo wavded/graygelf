@@ -8,11 +8,13 @@ suite('general', function () {
     assert.equal(typeof graygelf.createClient, 'function')
   })
 
-  test('defaults to localhost:12201 and GELF facility', function () {
+  test('defaults: localhost:12201, GELF facility, deflate compression, and 1240 bytes chunks', function () {
     var gg = graygelf.createClient()
     assert.equal(gg.graylogHost, 'localhost')
     assert.equal(gg.graylogPort, 12201)
     assert.equal(gg.facility, 'GELF')
+    assert.equal(gg.compressType, 'deflate')
+    assert.equal(gg.chunkSize, 1240)
   })
 
   test('accepts to host port and facility', function () {
@@ -68,7 +70,7 @@ suite('gelf messages', function () {
 
     gg._compress(gelf, function (chunk) {
       assert(Buffer.isBuffer(chunk), 'should be a buffer')
-      assert.equal(chunk[0], 0x78, 'should include zlib header')
+      assert.equal(chunk[0], 0x78, 'should include deflate header')
       next()
     })
   })
@@ -85,6 +87,20 @@ suite('gelf messages', function () {
       assert.equal(chunk[10], index++, 'should have index number')
       assert.equal(chunk[11], expectedChunks, 'should have total number')
       if (index == expectedChunks) next()
+    })
+  })
+})
+
+suite('gzip compression', function () {
+  var gg = graygelf.createClient({ host: 'graylog.test.local', port: 32323, facility: 'test_facility', compressType: 'gzip' })
+
+  test('compresses gelf message properly', function (next) {
+    var gelf = gg._prepJson(0, 'my message', { addn: 'data', _extra: 'field', _id: '2323232323' })
+
+    gg._compress(gelf, function (chunk) {
+      assert(Buffer.isBuffer(chunk), 'should be a buffer')
+      assert.equal(chunk[0], 0x1f, 'should include gzip header')
+      next()
     })
   })
 })

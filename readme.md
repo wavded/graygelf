@@ -28,6 +28,7 @@ host: (graylog host)
 port: (graylog port)
 facility: (graylog facility)
 chunkSize: (size of chunked messages in bytes, defaults to 1240)
+compressType: (type of compression: 'gzip' or 'deflate', defaults to 'deflate')
 ```
 
 ### Syslog Levels
