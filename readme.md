@@ -2,6 +2,8 @@
 
 GrayLog2 GELF logging, streaming, chunking, and more.  Includes client and server implementations.  AFAIK a complete [GELF](https://github.com/Graylog2/graylog2-docs/wiki/GELF) implementation.  Node Core style server and client.
 
+![GrayGelf](https://raw.github.com/wavded/graygelf/master/graygelf.png)
+
 ## Install
 
 ```
