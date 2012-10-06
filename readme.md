@@ -99,7 +99,7 @@ var client = graygelf.createClient({ host: 'other.server.local', port: 12201 }) 
 
 server.pipe(client) // establish proxy (straight UDP transfer, no JSON parsing)
 
-server.on('message', function () { // intercept JSON parsed messages
+server.on('message', function (msg) { // intercept JSON parsed messages
   console.log('received message', msg)
 })
 
