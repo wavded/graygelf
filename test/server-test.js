@@ -97,3 +97,20 @@ suite('gzip compress type', function () {
     client.emerg('my message', { addn2: 'more data', _more_extra: 'fields', _id: '2323232323' })
   })
 })
+
+suite('proxy server', function () {
+  var server1 = graygelf.createServer().listen(12203)
+  var client1 = graygelf.createClient({ port: 12203, facility: 'test_facility' })
+  var server2 = graygelf.createServer().listen(12204)
+  var client2 = graygelf.createClient({ port: 12204 })
+
+  server1.pipe(client2)
+
+  test('proxies gelf messages', function (done) {
+    server2.once('message', function (gelf) {
+      assert.equal(gelf.short_message, 'my proxied message', 'should include short_message')
+      done()
+    })
+    client1.emerg('my proxied message')
+  })
+})

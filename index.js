@@ -5,4 +5,4 @@ var GrayGelfServer = require('./lib/server')
 exports.Client = GrayGelf
 exports.Server = GrayGelfServer
 exports.createClient = function (opts) { return new GrayGelf(opts) }
-exports.createServer = function (opts, fn) { return new GrayGelfServer(opts, fn) }
+exports.createServer = function (fn) { return new GrayGelfServer(fn) }

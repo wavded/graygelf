@@ -93,6 +93,22 @@ server.on('error', console.error)
 
 GrayGelf handles `zlib`, `gzip` and chunked messages when a message gets above a certain size.
 
+### Efficient Proxying GrayLog
+
+```js
+var server = graygelf.createServer().listen(12202) // receive messages here
+var client = graygelf.createClient({ host: 'other.server.local', port: 12201 }) // send messages here
+
+server.pipe(client) // establish proxy (straight UDP transfer, no JSON parsing)
+
+server.on('message', function () { // intercept JSON parsed messages
+  console.log('received message', msg)
+})
+
+client.on('error', console.error)
+server.on('error', console.error)
+```
+
 ## License
 
 (The MIT License)
