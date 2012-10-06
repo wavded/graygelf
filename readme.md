@@ -70,7 +70,6 @@ fs.createReadStream('./data').pipe(logger.info.stream)
 ### Usage (callback style)
 
 ```js
-var graygelf = require('graygelf')
 var server = graygelf.createServer(function (msg) {
   console.log('recieved message', msg)
 })
@@ -81,7 +80,6 @@ server.listen(12201)
 ### Usage (evented style)
 
 ```js
-var graygelf = require('graygelf')
 var server = graygelf.createServer().listen() // defaults to GrayLog2 port 12201
 server.on('message', function (msg) {
   console.log('received message', msg)
@@ -93,7 +91,7 @@ server.on('error', console.error)
 
 GrayGelf handles `zlib`, `gzip` and chunked messages when a message gets above a certain size.
 
-### Efficient Proxying GrayLog
+### Efficient GrayLog Proxy and Interceptor
 
 ```js
 var server = graygelf.createServer().listen(12202) // receive messages here
