@@ -1,4 +1,11 @@
 
+0.2.1 / 2012-10-05 
+==================
+
+  * updated; desc and keywords
+  * removed; node 0.6 support
+  * added; .npmignore
+
 0.2.0 / 2012-10-05 
 ==================
 
