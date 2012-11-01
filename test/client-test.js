@@ -23,6 +23,15 @@ suite('general', function () {
     assert.equal(gg.graylogPort, 32323)
     assert.equal(gg.facility, 'test_facility')
   })
+
+  test('message listener to utilize in other formats', function () {
+    var gg = graygelf.createClient()
+    gg.on('message', function (level, msg) {
+      assert.equal(level, 0)
+      assert.equal(msg, 'oh no')
+    })
+    gg.emerg('oh no')
+  })
 })
 
 suite('level setups', function () {
