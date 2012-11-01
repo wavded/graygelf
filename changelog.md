@@ -1,4 +1,11 @@
 
+0.3.1 / 2012-11-01 
+==================
+
+  * added; message event for client
+  * added; link to GELF docs
+  * added; graygelf img
+
 0.3.0 / 2012-10-05 
 ==================
 
