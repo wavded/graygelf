@@ -15,9 +15,10 @@
   "author": "Marc Harter <wavded@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "1.6.0"
+    "mocha": "1.8.1"
   },
   "engines": {
     "node": ">= 0.8.0"
-  }
+  },
+  "dependencies": {}
 }

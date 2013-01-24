@@ -27,7 +27,7 @@ suite('general', function () {
   test('message listener to utilize in other formats', function () {
     var gg = graygelf.createClient()
     gg.on('message', function (level, msg) {
-      assert.equal(level, 0)
+      assert.equal(level, 'emerg')
       assert.equal(msg, 'oh no')
     })
     gg.emerg('oh no')
@@ -67,6 +67,14 @@ suite('gelf messages', function () {
     assert(gelf.timestamp, 'should include UNIX timestamp')
     assert.equal(gelf._extra, 'field', 'should include _ fields')
     assert(!gelf._id, 'should not include _id field')
+
+    var gelf = gg._prepJson(0, { 'an': 'object' }, [ 'data', 'field', '2323232323' ])
+
+    assert.equal(gelf.short_message.an, 'object', 'should include short message as an object')
+    assert(Array.isArray(gelf.full_message), 'should include a full message as an array')
+
+    var gelf = gg._prepJson(0, 'string1', 'string2')
+    assert.equal(gelf.full_message, 'string2', 'should include full message as a string')
   })
 
   test('supports binary message input', function () {
@@ -115,11 +123,19 @@ suite('gzip compression', function () {
 })
 
 suite('error messages', function () {
-  var gg = graygelf.createClient()
+  var gg = graygelf.createClient({ host: '1.2.3.4.5', port: 41234 })
 
   test('emit errors on udp messages', function () {
     var err = 'oh no';
-    gg.on('error', function (msg) { assert.equal(msg, err) })
+    gg.once('error', function (msg) { assert.equal(msg, err) })
     gg._checkError(err)
+  })
+
+  test('emits errors on failed lookups', function (done) {
+    gg.once('error', function (e) {
+      assert.equal(e.code,'ENOTFOUND', 'should have a code of ENOTFOUND')
+      done()
+    })
+    gg.info('cause a failure')
   })
 })
