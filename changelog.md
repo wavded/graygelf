@@ -1,4 +1,12 @@
 
+0.3.2 / 2013-01-24 
+==================
+
+  * updated; udp error handling
+  * updated; client 'message' includes level text instead of number
+  * fixed; don't pass full_message if none
+  * added; more tests
+
 0.3.1 / 2012-11-01 
 ==================
 
