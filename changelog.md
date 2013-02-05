@@ -1,4 +1,10 @@
 
+0.3.4 / 2013-02-05 
+==================
+
+  * fixed; handle out of order chunked message properly
+  * fixed; catch duplicate ids errors in server
+
 0.3.3 / 2013-02-04 
 ==================
 
