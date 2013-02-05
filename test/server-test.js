@@ -58,6 +58,33 @@ suite('deflate compress type', function () {
     })
     client.emerg('my message', { addn2: 'more data', _more_extra: 'fields', _id: '2323232323' })
   })
+
+  test('handles out of order chunked messages', function (done) {
+    server.once('message', function (gelf) {
+      assert.equal(gelf.version, '1.0', 'should have version: 1.0')
+      assert.equal(gelf.host, os.hostname(), 'should use os.hostname for host')
+      assert.equal(gelf.short_message, 'my message', 'should include short_message')
+      assert.equal(gelf.full_message.addn2, 'more data', 'should include full_message')
+      assert.equal(gelf.level, 0, 'should include level')
+      assert.equal(gelf.facility, 'test_facility', 'should include facility')
+      assert(gelf.timestamp, 'should include UNIX timestamp')
+      assert.equal(gelf._more_extra, 'fields', 'should include _ fields')
+      assert(!gelf._id, 'should not include _id field')
+      done()
+    })
+
+    var json = client._prepJson(0, 'my message', { addn2: 'more data', _more_extra: 'fields', _id: '2323232323' })
+    client.chunkSize = 100
+    var expectedChunks = 2
+    var chunks = []
+    client._compress(json, function (chunk) {
+      chunks.push(chunk)
+      if (!--expectedChunks) {
+        client.write(chunks[1])
+        client.write(chunks[0])
+      }
+    })
+  })
 })
 
 suite('gzip compress type', function () {
@@ -95,6 +122,33 @@ suite('gzip compress type', function () {
       done()
     })
     client.emerg('my message', { addn2: 'more data', _more_extra: 'fields', _id: '2323232323' })
+  })
+
+  test('handle out of order chunked messages', function (done) {
+    server.once('message', function (gelf) {
+      assert.equal(gelf.version, '1.0', 'should have version: 1.0')
+      assert.equal(gelf.host, os.hostname(), 'should use os.hostname for host')
+      assert.equal(gelf.short_message, 'my message', 'should include short_message')
+      assert.equal(gelf.full_message.addn2, 'more data', 'should include full_message')
+      assert.equal(gelf.level, 0, 'should include level')
+      assert.equal(gelf.facility, 'test_facility', 'should include facility')
+      assert(gelf.timestamp, 'should include UNIX timestamp')
+      assert.equal(gelf._more_extra, 'fields', 'should include _ fields')
+      assert(!gelf._id, 'should not include _id field')
+      done()
+    })
+
+    var json = client._prepJson(0, 'my message', { addn2: 'more data', _more_extra: 'fields', _id: '2323232323' })
+    client.chunkSize = 100
+    var expectedChunks = 2
+    var chunks = []
+    client._compress(json, function (chunk) {
+      chunks.push(chunk)
+      if (!--expectedChunks) {
+        client.write(chunks[1])
+        client.write(chunks[0])
+      }
+    })
   })
 })
 
