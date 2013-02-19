@@ -1,4 +1,10 @@
 
+0.3.5 / 2013-02-19 
+==================
+
+  * updated; do not get the hostname for every message [danmilon]
+  * added; custom log method [danmilon]
+
 0.3.4 / 2013-02-05 
 ==================
 
