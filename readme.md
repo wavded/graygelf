@@ -21,6 +21,7 @@ logger.on('error', console.error) // is an EventEmitter
 
 logger.info('Howdy GrayLog')
 logger.error('oh no', new Error('bad news'))
+logger.log('emerg', 'noes')
 ```
 
 ### Available Options
@@ -46,6 +47,9 @@ logger.warn(...)   // 4
 logger.notice(...) // 5
 logger.info(...)   // 6
 logger.debug(...)  // 7
+
+// or manually
+logger.log(level, short, full)
 ```
 
 Each logger function takes two parameters which can be of any type but typically `(string, object)`.

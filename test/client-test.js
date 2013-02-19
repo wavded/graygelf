@@ -43,6 +43,10 @@ suite('level setups', function () {
     })
   })
 
+  test('sets up method for custom level logging', function () {
+    assert.ok(typeof gg.log === 'function')
+  })
+
   test('sets up streams for every syslog level', function () {
     LOG_LEVELS.forEach(function (level) {
       assert.strictEqual(gg.stream[level].writable, true, level+' should be writable')
