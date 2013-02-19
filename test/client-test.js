@@ -75,6 +75,16 @@ suite('gelf messages', function () {
 
     var gelf = gg._prepJson(0, 'string1', 'string2')
     assert.equal(gelf.full_message, 'string2', 'should include full message as a string')
+
+    LOG_LEVELS.forEach(function (level, priority) {
+      var gelf = gg._prepJson(level, 'message')
+
+      assert.equal(gelf.level, priority, 'should accept levels as strings')
+    })
+
+    assert.throws(function () {
+      gg._prepJson('does not exist', 'message')
+    }, /invalid level/)
   })
 
   test('supports binary message input', function () {
