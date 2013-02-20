@@ -30,7 +30,9 @@ suite('general', function () {
       assert.equal(level, 'emerg')
       assert.equal(msg, 'oh no')
     })
+
     gg.emerg('oh no')
+    gg.log('emerg', 'oh no')
   })
 })
 
