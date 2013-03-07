@@ -1,4 +1,9 @@
 
+0.3.6 / 2013-03-07 
+==================
+
+  * fixed; undefined level emitted when .log is used [danmilon]
+
 0.3.5 / 2013-02-19 
 ==================
 
