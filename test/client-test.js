@@ -26,12 +26,9 @@ suite('general', function () {
 
   test('message listener to utilize in other formats', function () {
     var gg = graygelf.createClient()
-    gg.on('message', function (level, msg) {
+    gg.once('message', function (level, msg) {
       assert.equal(level, 'emerg')
-      assert.equal(msg, 'oh no')
     })
-
-    gg.emerg('oh no')
     gg.log('emerg', 'oh no')
   })
 })
@@ -139,7 +136,7 @@ suite('gzip compression', function () {
 })
 
 suite('error messages', function () {
-  var gg = graygelf.createClient({ host: '1.2.3.4.5', port: 41234 })
+  var gg = graygelf.createClient({ host: 'graylog.adc4gis.local', port: 1223232 })
 
   test('emit errors on udp messages', function () {
     var err = 'oh no';
@@ -147,11 +144,11 @@ suite('error messages', function () {
     gg._checkError(err)
   })
 
-  test('emits errors on failed lookups', function (done) {
+  test('emits errors from udp', function (done) {
     gg.once('error', function (e) {
-      assert.equal(e.code,'ENOTFOUND', 'should have a code of ENOTFOUND')
+      assert.equal(e.message, 'cause a failure')
       done()
     })
-    gg.info('cause a failure')
+    gg._udp.emit('error',new Error('cause a failure'))
   })
 })

@@ -23,8 +23,18 @@ suite('general', function () {
 })
 
 suite('deflate compress type', function () {
-  var server = graygelf.createServer().listen(12201)
-  var client = graygelf.createClient({ facility: 'test_facility' })
+  var server
+  var client
+
+  setup(function () {
+    server = graygelf.createServer().listen(12201)
+    client = graygelf.createClient({ facility: 'test_facility' })
+  })
+
+  teardown(function () {
+    server.close()
+    client.close()
+  })
 
   test('handles gelf messages', function (done) {
     server.once('message', function (gelf) {
@@ -88,8 +98,18 @@ suite('deflate compress type', function () {
 })
 
 suite('gzip compress type', function () {
-  var server = graygelf.createServer().listen(12202)
-  var client = graygelf.createClient({ port: 12202, facility: 'test_facility', compressType: 'gzip' })
+  var server
+  var client
+
+  setup(function () {
+    server = graygelf.createServer().listen(12201)
+    client = graygelf.createClient({ port: 12201, facility: 'test_facility', compressType: 'gzip' })
+  })
+
+  teardown(function () {
+    server.close()
+    client.close()
+  })
 
   test('handles gelf messages', function (done) {
     server.once('message', function (gelf) {
