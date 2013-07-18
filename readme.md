@@ -10,6 +10,8 @@ GrayLog2 GELF logging, streaming, chunking, and more.  Production tested.  Inclu
 npm install graygelf
 ```
 
+[![NPM](https://nodei.co/npm/graygelf.png?downloads=true)](https://nodei.co/npm/graygelf)
+
 ## Client (i.e. as a logging tool)
 
 ### Usage
