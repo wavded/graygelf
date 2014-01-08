@@ -1,6 +1,6 @@
 {
   "name": "graygelf",
-  "version": "0.3.5",
+  "version": "0.3.7",
   "description": "Fully compliant GELF/Graylog2 client and server",
   "main": "index.js",
   "scripts": {

@@ -1,4 +1,12 @@
 
+0.3.7 / 2014-01-08
+==================
+
+ * updated; deps
+ * fix; do not write logs if client is closed
+ * added; npm badge
+ * updated; tests for node 0.10.0
+
 0.3.6 / 2013-03-07 
 ==================
 
