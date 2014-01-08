@@ -30,6 +30,11 @@ suite('general', function () {
       assert.equal(level, 'emerg')
     })
     gg.log('emerg', 'oh no')
+
+    gg.close()
+    assert.doesNotThrow(function () {
+      gg.log('emerg', 'oh no')
+    }, 'ignores logs after close')
   })
 })
 
