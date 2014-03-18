@@ -1,0 +1,18 @@
+{
+  "strict": true,
+  "asi": true,
+  "node": true,
+  "newcap": false,
+  "undef": true,
+  "laxbreak": true,
+  "validthis": true,
+  "expr": true,
+  "proto": true,
+  "eqnull": true,
+  "globals": {
+    "suite": true,
+    "test": true,
+    "setup": true,
+    "teardown": true
+  }
+}

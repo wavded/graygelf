@@ -1,3 +1,4 @@
+"use strict";
 var assert = require('assert')
 var os = require('os')
 var graygelf = require('../')
@@ -76,12 +77,12 @@ suite('gelf messages', function () {
     assert.equal(gelf._extra, 'field', 'should include _ fields')
     assert(!gelf._id, 'should not include _id field')
 
-    var gelf = gg._prepJson(0, { 'an': 'object' }, [ 'data', 'field', '2323232323' ])
+    gelf = gg._prepJson(0, { 'an': 'object' }, [ 'data', 'field', '2323232323' ])
 
     assert.equal(gelf.short_message.an, 'object', 'should include short message as an object')
     assert(Array.isArray(gelf.full_message), 'should include a full message as an array')
 
-    var gelf = gg._prepJson(0, 'string1', 'string2')
+    gelf = gg._prepJson(0, 'string1', 'string2')
     assert.equal(gelf.full_message, 'string2', 'should include full message as a string')
 
     LOG_LEVELS.forEach(function (level, priority) {

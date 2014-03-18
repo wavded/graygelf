@@ -1,3 +1,4 @@
+"use strict";
 var GrayGelf = require('./lib/client')
 var GrayGelfServer = require('./lib/server')
 

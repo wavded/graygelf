@@ -4,7 +4,8 @@
   "description": "Fully compliant GELF/Graylog2 client and server",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "lint": "jshint lib test index.js"
   },
   "keywords": [
     "graylog2",
@@ -15,7 +16,8 @@
   "author": "Marc Harter <wavded@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "1.16.2"
+    "mocha": "1.16.2",
+    "jshint": "^2.4.4"
   },
   "engines": {
     "node": ">= 0.8.0"
