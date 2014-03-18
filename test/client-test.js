@@ -25,6 +25,11 @@ suite('general', function () {
     assert.equal(gg.facility, 'test_facility')
   })
 
+  test('can be mocked', function () {
+    var gg = graygelf.createClient({ mock: true })
+    assert.ok(!gg._udp, 'does not setup a udp client')
+  })
+
   test('message listener to utilize in other formats', function () {
     var gg = graygelf.createClient()
     gg.once('message', function (level, msg) {

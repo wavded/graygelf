@@ -34,6 +34,7 @@ port: (graylog port)
 facility: (graylog facility)
 chunkSize: (size of chunked messages in bytes, defaults to 1240)
 compressType: (type of compression: 'gzip' or 'deflate', defaults to 'deflate')
+mock: (mock a UDP client (no UDP client is actually used -- for testing or development enviroments), defaults to false)
 ```
 
 ### Syslog Levels
