@@ -17,10 +17,10 @@
   "license": "MIT",
   "devDependencies": {
     "mocha": "1.16.2",
-    "jshint": "^2.4.4"
+    "jshint": "2.4.4"
   },
   "engines": {
-    "node": ">= 0.8.0"
+    "node": ">= 0.10.0"
   },
   "dependencies": {}
 }
