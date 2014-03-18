@@ -1,6 +1,6 @@
 # GrayGelf [![Build Status](https://secure.travis-ci.org/wavded/graygelf.png)](http://travis-ci.org/wavded/graygelf)
 
-GrayLog2 GELF logging, streaming, chunking, and more.  Production tested.  Includes client and server implementations.  AFAIK a complete [GELF](https://github.com/Graylog2/graylog2-docs/wiki/GELF) implementation.  Node Core style server and client.
+GrayLog2 GELF UDP logging, streaming, chunking, and more.  Production tested.  Includes client and server implementations.  AFAIK a complete [GELF](https://github.com/Graylog2/graylog2-docs/wiki/GELF) implementation.  Node Core style server and client.
 
 ![GrayGelf](https://raw.github.com/wavded/graygelf/master/graygelf.png)
 
@@ -12,7 +12,7 @@ npm install graygelf
 
 [![NPM](https://nodei.co/npm/graygelf.png?downloads=true)](https://nodei.co/npm/graygelf)
 
-## Client (i.e. as a logging tool)
+## Client (i.e. as a UDP-based logging tool)
 
 ### Usage
 
@@ -73,7 +73,7 @@ Each log level has an associated writeable stream `.stream` that can be used to 
 fs.createReadStream('./data').pipe(logger.info.stream)
 ```
 
-## Server (make your own GrayLog server or intercept messages to GrayLog)
+## Server (make your own GrayLog UDP server or intercept messages to GrayLog)
 
 ### Usage (callback style)
 
