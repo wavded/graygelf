@@ -1,4 +1,11 @@
 
+0.4.0 / 2014-03-18
+==================
+
+ * drop; node 0.8 support
+ * add; mocking for client
+ * add; bound logging level functions
+
 0.3.7 / 2014-01-08
 ==================
 
