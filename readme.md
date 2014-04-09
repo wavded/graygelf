@@ -71,7 +71,7 @@ logger.emerg('some thing more than 10 bytes', 'more detail')
 Each log level has an associated writeable stream `.stream` that can be used to pipe data into
 
 ```js
-fs.createReadStream('./data').pipe(logger.info.stream)
+fs.createReadStream('./data').pipe(logger.stream.info)
 ```
 
 ## Server (make your own GrayLog UDP server or intercept messages to GrayLog)
