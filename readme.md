@@ -31,7 +31,7 @@ logger.log('emerg', 'noes')
 ```
 host: (graylog host)
 port: (graylog port)
-facility: (graylog facility)
+facility: (graylog facility - optional for GELF 1.1)
 chunkSize: (size of chunked messages in bytes, defaults to 1240)
 compressType: (type of compression: 'gzip' or 'deflate', defaults to 'deflate')
 mock: (mock a UDP client (no UDP client is actually used -- for testing or development enviroments), defaults to false)

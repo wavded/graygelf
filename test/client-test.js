@@ -13,7 +13,7 @@ suite('general', function () {
     var gg = graygelf.createClient()
     assert.equal(gg.graylogHost, 'localhost')
     assert.equal(gg.graylogPort, 12201)
-    assert.equal(gg.facility, 'GELF')
+    assert.equal(gg.facility, undefined)
     assert.equal(gg.compressType, 'deflate')
     assert.equal(gg.chunkSize, 1240)
   })
