@@ -1,4 +1,4 @@
-# GrayGelf [![Build Status](https://secure.travis-ci.org/wavded/graygelf.png)](http://travis-ci.org/wavded/graygelf)
+# GrayGelf [![Build Status](https://secure.travis-ci.org/wavded/graygelf.svg)](http://travis-ci.org/wavded/graygelf)
 
 GrayLog2 GELF UDP logging, streaming, chunking, and more.  Production tested.  Includes client and server implementations.  AFAIK a complete [GELF](https://github.com/Graylog2/graylog2-docs/wiki/GELF) implementation.  Node Core style server and client.
 

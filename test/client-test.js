@@ -90,6 +90,10 @@ suite('gelf messages', function () {
     gelf = gg._prepJson(0, 'string1', 'string2')
     assert.equal(gelf.full_message, 'string2', 'should include full message as a string')
 
+    gelf = gg._prepJson(0, 'a', 'b', 'c', 'd', 'full' )
+    assert.equal(gelf.full_message, 'full', 'full message should be last argument')
+    assert.equal(gelf.short_message, 'a b c d', 'concats prev arguments akin to console.log')
+
     LOG_LEVELS.forEach(function (level, priority) {
       var gelf = gg._prepJson(level, 'message')
 
