@@ -39,7 +39,7 @@ suite('deflate compress type', function () {
 
   test('handles gelf messages', function (done) {
     server.once('message', function (gelf) {
-      assert.equal(gelf.version, '1.0', 'should have version: 1.0')
+      assert.equal(gelf.version, '1.1', 'should have version: 1.1')
       assert.equal(gelf.host, os.hostname(), 'should use os.hostname for host')
       assert.equal(gelf.short_message, 'my message', 'should include short_message')
       assert.equal(gelf.full_message.addn, 'data', 'should include full_message')
@@ -56,7 +56,7 @@ suite('deflate compress type', function () {
   test('handles chunked messages', function (done) {
     client.chunkSize = 10
     server.once('message', function (gelf) {
-      assert.equal(gelf.version, '1.0', 'should have version: 1.0')
+      assert.equal(gelf.version, '1.1', 'should have version: 1.1')
       assert.equal(gelf.host, os.hostname(), 'should use os.hostname for host')
       assert.equal(gelf.short_message, 'my message', 'should include short_message')
       assert.equal(gelf.full_message.addn2, 'more data', 'should include full_message')
@@ -72,7 +72,7 @@ suite('deflate compress type', function () {
 
   test('handles out of order chunked messages', function (done) {
     server.once('message', function (gelf) {
-      assert.equal(gelf.version, '1.0', 'should have version: 1.0')
+      assert.equal(gelf.version, '1.1', 'should have version: 1.1')
       assert.equal(gelf.host, os.hostname(), 'should use os.hostname for host')
       assert.equal(gelf.short_message, 'my message', 'should include short_message')
       assert.equal(gelf.full_message.addn2, 'more data', 'should include full_message')
@@ -114,7 +114,7 @@ suite('gzip compress type', function () {
 
   test('handles gelf messages', function (done) {
     server.once('message', function (gelf) {
-      assert.equal(gelf.version, '1.0', 'should have version: 1.0')
+      assert.equal(gelf.version, '1.1', 'should have version: 1.1')
       assert.equal(gelf.host, os.hostname(), 'should use os.hostname for host')
       assert.equal(gelf.short_message, 'my message', 'should include short_message')
       assert.equal(gelf.full_message.addn2, 'more data', 'should include full_message')
@@ -131,7 +131,7 @@ suite('gzip compress type', function () {
   test('handles chunked messages', function (done) {
     client.chunkSize = 10
     server.once('message', function (gelf) {
-      assert.equal(gelf.version, '1.0', 'should have version: 1.0')
+      assert.equal(gelf.version, '1.1', 'should have version: 1.1')
       assert.equal(gelf.host, os.hostname(), 'should use os.hostname for host')
       assert.equal(gelf.short_message, 'my message', 'should include short_message')
       assert.equal(gelf.full_message.addn2, 'more data', 'should include full_message')
@@ -147,7 +147,7 @@ suite('gzip compress type', function () {
 
   test('handle out of order chunked messages', function (done) {
     server.once('message', function (gelf) {
-      assert.equal(gelf.version, '1.0', 'should have version: 1.0')
+      assert.equal(gelf.version, '1.1', 'should have version: 1.1')
       assert.equal(gelf.host, os.hostname(), 'should use os.hostname for host')
       assert.equal(gelf.short_message, 'my message', 'should include short_message')
       assert.equal(gelf.full_message.addn2, 'more data', 'should include full_message')

@@ -72,7 +72,7 @@ suite('gelf messages', function () {
   test('sets up proper gelf message', function () {
     var gelf = gg._prepJson(0, 'my message', { addn: 'data', _extra: 'field', _id: '2323232323' })
 
-    assert.equal(gelf.version, '1.0', 'should have version: 1.0')
+    assert.equal(gelf.version, '1.1', 'should have version: 1.1')
     assert.equal(gelf.host, os.hostname(), 'should use os.hostname for host')
     assert.equal(gelf.short_message, 'my message', 'should include short_message')
     assert.equal(gelf.full_message.addn, 'data', 'should include full_message')
