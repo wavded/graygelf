@@ -1,4 +1,10 @@
 
+0.5.1 / 2014-08-26
+==================
+
+ * fix; bad microtime timestamp
+ * mod; spec link in readme
+
 0.5.0 / 2014-08-20
 ==================
 
