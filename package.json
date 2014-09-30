@@ -4,8 +4,8 @@
   "description": "Fully compliant GELF/Graylog2 client and server",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
-    "lint": "jshint lib test index.js"
+    "test": "istanbul cover tape \"test/**/*-test.js\"",
+    "ci-test": "istanbul cover tape \"test/**/*-test.js\" > test.tap && istanbul report clover"
   },
   "keywords": [
     "graylog2",
@@ -16,17 +16,15 @@
   "author": "Marc Harter <wavded@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "1.16.2",
-    "jshint": "2.4.4"
+    "istanbul": "^0.3.2",
+    "tape": "^3.0.0",
+    "mocha": "1.16.2"
   },
   "engines": {
     "node": ">= 0.10.0"
   },
   "dependencies": {
-    "lodash.isplainobject": "^2.4.1",
-    "lodash.merge": "^2.4.1",
-    "split": "^0.3.0",
-    "tape": "^3.0.0"
+    "split": "^0.3.0"
   },
   "optionalDependencies": {
     "microtime": "^1.0.1"

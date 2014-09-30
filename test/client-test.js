@@ -1,141 +1,184 @@
 var test = require('tape')
 var os = require('os')
 var graygelf = require('../')
+var fs = require('fs')
+var join = require('path').join
 
-test('defaults', function (t) {
-  var gg = graygelf()
-  t.equal(gg.graylogHost, 'localhost')
-  t.equal(gg.graylogPort, 12201)
-  t.equal(gg.facility, undefined)
-  t.equal(gg.compressType, 'deflate')
-  t.equal(gg.chunkSize, 1240)
+test('graygelf', function (t) {
+  var log = graygelf() // defaults
+  t.equal(log.graylogHost, 'localhost')
+  t.equal(log.graylogPort, 12201)
+  t.equal(log.compressType, 'deflate')
+  t.equal(log.chunkSize, 1240)
+  t.ok(log._udp, 'set up a udp client')
+
+  var loghost = graygelf('a.server.yo')
+  t.equal(loghost.graylogHost, 'a.server.yo')
+
+  var logopts = graygelf({
+    host: 'word',
+    port: 23232,
+    compressType: 'gzip',
+    chunkSize: 10
+  })
+  t.equal(logopts.graylogHost, 'word')
+  t.equal(logopts.graylogPort, 23232)
+  t.equal(logopts.compressType, 'gzip')
+  t.equal(logopts.chunkSize, 10)
+
+  var logmock = graygelf({ mock: true })
+  t.ok(!logmock._udp, 'does not set up a udp client')
+  logmock.write('blah blah') // will throw if fails
+  t.pass('write does nothing when mocking')
   t.end()
 })
 
-test('mocking', function (t) {
-  var gg = graygelf({ mock: true })
-  t.ok(!gg._udp, 'does not setup a udp client')
-  t.end()
+test('log.on("message")', function (t) {
+  t.plan(5)
+  var log = graygelf()
+  log.once('message', function (data) {
+    t.equal(data.level, 0, 'stores level')
+    t.ok(data.timestamp, 0, 'stores timestamp')
+    t.ok(data.version, '1.1', 'sets version')
+    t.equal(data.host, os.hostname(), 'sets host')
+    t.equal(data.short_message, 'oh no', 'sets short_message')
+  })
+  log.emerg('oh', 'no')
 })
 
-test('emits messages', function (t) {
+test('log.on("error")', function (t) {
   t.plan(1)
-  var gg = graygelf()
-  gg.once('message', function (data) {
-    t.equal(0, data.level, 0)
+  var log = graygelf()
+  log.once('error', function (er) {
+    t.equal(er, 'oh no', 'will emit errors emitted by udp client')
   })
-  gg.emerg('oh', 'no')
+  log._udp.emit('error', 'oh no')
 })
 
-test('setups per level', function (t) {
-  var gg = graygelf()
+test('log.fields', function (t) {
+  var log = graygelf(), gelf
+  log.fields.facility = 'test'
+
+  gelf = log.info('test')
+  t.equal(gelf._facility, 'test', 'includes global custom fields')
+
+  gelf = log.info.a('test', 'full', { facility: 'testa', row: 32 })
+  t.equal(gelf._row, 32, 'includes local custom fields')
+  t.equal(gelf._facility, 'testa', 'local custom fields override global')
+  t.end()
+})
+
+test('log[level]', function (t) {
+  var log = graygelf(), gelf
   Object.keys(graygelf.LOG_LEVELS).forEach(function (level) {
-    t.equal(typeof gg[level], 'function', level)
-    t.ok(gg.stream[level].writable, level+' writable')
-    t.equal(typeof gg.stream[level].write, 'function', level+' write function')
-    t.equal(typeof gg.stream[level].end, 'function', level+' end function')
+    t.equal(typeof log[level], 'function', 'has '+level)
   })
+  gelf = log.info('hello', 'world')
+  t.equal(gelf.short_message, 'hello world', 'console concat')
+  t.equal(gelf.level, 6, 'sets level 6')
+
+  gelf = log.error('hello %s', 'world')
+  t.equal(gelf.short_message, 'hello world', 'console printf')
+  t.equal(gelf.level, 3, 'sets level 3')
+
+  var er = new Error('oh no')
+  gelf = log.crit(er)
+  t.equal(gelf.short_message, 'oh no', 'stores er.message as short_message')
+  t.equal(gelf.level, 2, 'sets level 2')
+  t.ok(/client-test.js/.test(gelf.full_message), 'stores stack a full_message')
   t.end()
 })
 
-test('gelf messages', function (t) {
-  var gg = graygelf({
-    host: 'graylog.test.local',
-    port: 32323,
-    facility: 'test_facility'
+test('log[level].a', function (t) {
+  var log = graygelf(), gelf
+  Object.keys(graygelf.LOG_LEVELS).forEach(function (level) {
+    t.equal(typeof log[level].a, 'function', 'has '+level+'.a')
   })
+  gelf = log.info.a('hello world', 'a long message', { custom: 'field' })
+  t.equal(gelf.short_message, 'hello world', 'stores short_message')
+  t.equal(gelf.full_message, 'a long message', 'stores full_message')
+  t.equal(gelf._custom, 'field', 'stores custom fields')
 
-  gg.once('message', function (gelf) {
-    t.equal(gelf.version, '1.1', 'should have version: 1.1')
-    t.equal(gelf.host, os.hostname(), 'should use os.hostname for host')
-    t.equal(gelf.short_message, 'my message', 'should include short_message')
-    t.equal(gelf.full_message.addn, 'data', 'should include full_message')
-    t.equal(gelf.level, 0, 'should include level')
-    t.equal(gelf.facility, 'test_facility', 'should include facility')
-    t.ok(gelf.timestamp, 'should include UNIX timestamp')
-    t.equal(gelf._extra, 'field', 'should include _ fields')
-    t.ok(!gelf._id, 'should not include _id field')
-  })
-  gg.emerg.a('my message', { addn: 'data', _extra: 'field', _id: '2323232323' })
-
-
-
-  // gelf = gg._prepJSON(0, { 'an': 'object' }, [ 'data', 'field', '2323232323' ])
-
-  // t.equal(gelf.short_message.an, 'object', 'should include short message as an object')
-  // t.ok(Array.isArray(gelf.full_message), 'should include a full message as an array')
-
-  // gelf = gg._prepJSON(0, 'string1', 'string2')
-  // t.equal(gelf.full_message, 'string2', 'should include full message as a string')
-
-  // gelf = gg._prepJSON(0, 'a', 'b', 'c', 'd', 'full' )
-  // t.equal(gelf.full_message, 'full', 'full message should be last argument')
-  // t.equal(gelf.short_message, 'a b c d', 'concats prev arguments akin to console.log')
   t.end()
 })
 
-// suite('gelf messages', function () {
-//   })
+test('log.stream', function (t) {
+  var log = graygelf()
+  t.plan(5)
 
-//   test('supports binary message input', function () {
-//     var gelf = gg._prepJson(0, new Buffer('some characters'))
-//     assert.equal(gelf.short_message, 'some characters', 'should include short_message')
-//   })
+  t.throws(function () {
+    log.stream('wfasdfas')
+  }, 'throws if invalid stream name')
 
-//   test('compresses gelf message properly', function (next) {
-//     var gelf = gg._prepJson(0, 'my message', { addn: 'data', _extra: 'field', _id: '2323232323' })
+  var rstream = fs.createReadStream(join(__dirname,'stream.txt'))
+  var data = [
+    'A line',
+    'A second line'
+  ]
 
-//     gg._compress(gelf, function (chunk) {
-//       assert(Buffer.isBuffer(chunk), 'should be a buffer')
-//       assert.equal(chunk[0], 0x78, 'should include deflate header')
-//       next()
-//     })
-//   })
+  log.on('message', function (gelf) {
+    t.equal(gelf.level, 6, 'level 6')
+    t.equal(gelf.short_message, data.shift(), 'lined data')
+  })
 
-//   test('handles chunked gelf messages properly', function (next) {
-//     var gelf = gg._prepJson(0, 'my message', { addn: 'data', _extra: 'field', _id: '2323232323' })
-//     gg.chunkSize = 100
-//     var index = 0
-//     var expectedChunks = 2
+  rstream.pipe(log.stream('info'))
+})
 
-//     gg._compress(gelf, function (chunk) {
-//       assert(Buffer.isBuffer(chunk), 'should be a buffer')
-//       assert.equal(chunk[0], 0x1e, 'should include chunk header')
-//       assert.equal(chunk[10], index++, 'should have index number')
-//       assert.equal(chunk[11], expectedChunks, 'should have total number')
-//       if (index == expectedChunks) next()
-//     })
-//   })
-// })
+test('log.raw', function (t) {
+  var log = graygelf(), gelf
+  gelf = log.raw({
+    level: 0,
+    short_message: 'a short message',
+    _custom: 'field'
+  })
 
-// suite('gzip compression', function () {
-//   var gg = graygelf.createClient({ host: 'graylog.test.local', port: 32323, facility: 'test_facility', compressType: 'gzip' })
+  t.equal(gelf._custom, 'field', 'includes provided data')
+  t.equal(gelf.version, '1.1', 'sets version if absent')
+  t.equal(gelf.host, os.hostname(), 'sets host if absent')
+  t.ok(gelf.timestamp, 'sets timestamp if absent')
 
-//   test('compresses gelf message properly', function (next) {
-//     var gelf = gg._prepJson(0, 'my message', { addn: 'data', _extra: 'field', _id: '2323232323' })
+  gelf = log.raw({
+    version: '1.0',
+    host: 'ahost',
+    timestamp: 100
+  })
+  t.equal(gelf.version, '1.0', 'uses version if present')
+  t.equal(gelf.host, 'ahost', 'uses host if present')
+  t.equal(gelf.timestamp, 100, 'uses timestamp if present')
 
-//     gg._compress(gelf, function (chunk) {
-//       assert(Buffer.isBuffer(chunk), 'should be a buffer')
-//       assert.equal(chunk[0], 0x1f, 'should include gzip header')
-//       next()
-//     })
-//   })
-// })
+  t.end()
+})
 
-// suite('error messages', function () {
-//   var gg = graygelf.createClient({ host: 'graylog.adc4gis.local', port: 1223232 })
+test('log._send', function (t) {
+  t.plan(2)
+  var log = graygelf()
 
-//   test('emit errors on udp messages', function () {
-//     var err = 'oh no';
-//     gg.once('error', function (msg) { assert.equal(msg, err) })
-//     gg._checkError(err)
-//   })
+  // overwrite for testing
+  log.write = function (chunk) {
+    t.ok(Buffer.isBuffer(chunk), 'should be a buffer')
+    t.equal(chunk[0], 0x78, 'should include deflate header')
+  }
 
-//   test('emits errors from udp', function (done) {
-//     gg.once('error', function (e) {
-//       assert.equal(e.message, 'cause a failure')
-//       done()
-//     })
-//     gg._udp.emit('error',new Error('cause a failure'))
-//   })
-// })
+  var gelf = log._prepGelf(0, 'my message')
+  log._send(gelf)
+})
+
+test('log._send (chunked)', function (t) {
+  var log = graygelf()
+  log.chunkSize = 100
+
+  var expectedChunks = 2
+  var index = 0
+
+  // overwrite for testing
+  log.write = function (chunk) {
+    t.ok(Buffer.isBuffer(chunk), 'should be a buffer')
+    t.equal(chunk[0], 0x1e, 'should include chunk header')
+    t.equal(chunk[10], index++, 'should have index number')
+    t.equal(chunk[11], expectedChunks, 'should have total number')
+    if (index === expectedChunks) t.end()
+  }
+
+  var gelf = log._prepGelf(0, 'my message', 'full message', { extra: 'field' })
+  log._send(gelf)
+})
