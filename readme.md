@@ -42,7 +42,7 @@ var infostream = log.stream('info')
 var rstream = require('fs').createReadStream(__filename)
 rstream.pipe(infostream) // lines automatically split up and sent seperately
 
-// raw gelf, version, host, and timestamp will be supplied if missing
+// raw gelf: version, host, and timestamp will be supplied if missing
 log.raw({
   // version: '1.1',
   // host: 'wavded',
@@ -88,8 +88,19 @@ mock
 
 ## API
 
-### log[level]
-GrayGelf maps the syslog levels to functions.  All functions have the same semantics as `console.log` in Node (e.g. printf style, concat by space):
+### log.fields
+
+Add global custom fields to be included in every message.
+
+```js
+log.fields.facility = 'facility'
+```
+
+Note: `fields` is plain JavaScript object.
+
+### log\[level\](message)
+
+GrayGelf maps the syslog levels to functions.  All functions have the same semantics as `console.log` (i.e. printf style, concat by space):
 
 ```js
 log.emerg(...)  // 0 - alias: panic
@@ -102,7 +113,7 @@ log.info(...)   // 6
 log.debug(...)  // 7
 ```
 
-### log[level].a
+### log[level].a(short, long, custom)
 
 There also is an `a(ttach)` method to include a full message.
 
@@ -110,13 +121,13 @@ There also is an `a(ttach)` method to include a full message.
 log.crit.a('short message', 'full message')
 ```
 
-The `a(ttach)` method can have an optional third argument to define custom fields that will be passed to Graylog2 (creating addition search points and columns)
+The `a(ttach)` method can have an optional third argument to define custom fields that will be passed to Graylog2.
 
 ```js
-log.info.a('short message', 'full message', { custom, 'field' })
+log.info.a('short message', 'full message', { custom: 'field' })
 ```
 
-### log.stream
+### log.stream(level)
 
 Create a writable stream to pipe log messages into:
 
@@ -125,6 +136,24 @@ var stream = log.stream('info')
 ```
 
 Streams automatically break lines up and pass each line to GrayLog2 at the specified level.
+
+### log.raw(gelf)
+
+Pass a raw [GELF](http://www.graylog2.org/resources/gelf/specification) message.  The following fields will be populated if absent: `version`, `host`, and `timestamp`.
+
+```js
+log.raw({
+  version: '1.1',
+  host: 'wavded',
+  short_message: 'oh no!',
+  full_message: 'howdy',
+  timestamp: 1412087767.704356,
+  level: 6,
+  _foo: 'custom field'
+})
+```
+
+Note: No global custom fields (`log.fields`) are included when using `log.raw`.
 
 ## Server
 
