@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "istanbul cover tape \"test/**/*-test.js\"",
+    "lint": "eslint --no-ignore test serve.js index.js",
     "ci-test": "istanbul cover tape \"test/**/*-test.js\" > test.tap && istanbul report clover"
   },
   "keywords": [
@@ -16,9 +17,10 @@
   "author": "Marc Harter <wavded@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^0.8.2",
     "istanbul": "^0.3.2",
-    "tape": "^3.0.0",
-    "mocha": "1.16.2"
+    "mocha": "1.16.2",
+    "tape": "^3.0.0"
   },
   "engines": {
     "node": ">= 0.10.0"

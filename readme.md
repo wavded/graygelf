@@ -1,6 +1,6 @@
 # GrayGelf [![Build Status](https://secure.travis-ci.org/wavded/graygelf.svg)](http://travis-ci.org/wavded/graygelf) [![Coverage Status](https://img.shields.io/coveralls/wavded/graygelf.svg)](https://coveralls.io/r/wavded/graygelf)
 
-GrayLog2 GELF UDP logging, streaming, chunking, and more.  Production tested.  Includes client and server implementations.  AFAIK a complete [GELF](http://graylog2.org/gelf#specs) implementatio
+GrayLog2 GELF UDP logging, streaming, chunking, and more.  Production tested.  Includes client and server implementations.  AFAIK a complete [GELF](http://graylog2.org/gelf#specs) implementation.
 
 ![GrayGelf](https://raw.github.com/wavded/graygelf/master/graygelf.png)
 

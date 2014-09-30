@@ -32,6 +32,7 @@ var LOG_LEVELS = {
 }
 
 var GrayGelf = function (opts) {
+  /* eslint complexity:0 */
   if (!(this instanceof GrayGelf)) {
     return new GrayGelf(opts)
   }
