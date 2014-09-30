@@ -42,17 +42,14 @@ mock: (mock a UDP client (no UDP client is actually used -- for testing or devel
 GrayGelf maps the syslog levels to functions as follows:
 
 ```js
-logger.emerg('short message', 'detailed message')  // 0
+logger.emerg(...)  // 0 - alias: panic
 logger.alert(...)  // 1
 logger.crit(...)   // 2
-logger.error(...)  // 3
-logger.warn(...)   // 4
+logger.error(...)  // 3 - alias: err
+logger.warn(...)   // 4 - alias: warning
 logger.notice(...) // 5
 logger.info(...)   // 6
 logger.debug(...)  // 7
-
-// or manually
-logger.log(level, short, full)
 ```
 
 Each logger function takes two parameters which can be of any type but typically `(string, object)`.

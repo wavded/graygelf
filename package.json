@@ -22,7 +22,11 @@
   "engines": {
     "node": ">= 0.10.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "lodash.isplainobject": "^2.4.1",
+    "split": "^0.3.0",
+    "tape": "^3.0.0"
+  },
   "optionalDependencies": {
     "microtime": "^1.0.1"
   }
