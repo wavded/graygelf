@@ -1,19 +1,22 @@
-"use strict";
-var zlib = require('zlib')
-var dgram = require('dgram')
+var zlib   = require('zlib')
+var dgram  = require('dgram')
 var Stream = require('stream')
 
-var GrayGelfServer = function (cb) {
-  this.callback = cb || null
+var GrayGelfServer = function () {
+  if (!(this instanceof GrayGelfServer)) {
+    return new GrayGelfServer()
+  }
+
   this.pendingChunks = Object.create(null)
-  this.readable = true // readable stream
+  this.readable      = true
 }
 GrayGelfServer.prototype = Object.create(Stream.prototype)
 
-GrayGelfServer.prototype._checkError = function (er) { if (er) this.emit('error', er) }
+GrayGelfServer.prototype._checkError = function (er) { this.emit('error', er) }
 
 GrayGelfServer.prototype.listen = function (port, address) {
-  if (this._listening) throw new Error('GrayGelf is already listening on a port')
+  if (this._udp) throw new Error('GrayGelf is already listening on a port')
+
   this.port = port || 12201
   this.address = address || '0.0.0.0'
 
@@ -21,16 +24,22 @@ GrayGelfServer.prototype.listen = function (port, address) {
   this._udp.on('error', this._checkError.bind(this))
   this._udp.on('message', this._message.bind(this))
   this._udp.bind(this.port, this.address)
-  this._listening = true
-  setInterval(this._checkExpired.bind(this), 60000) // clean incomplete chunked messages
+
+  // clean incomplete chunked messages
+  this._chunkInterval = setInterval(this._checkExpired.bind(this), 60000)
+  return this
+}
+
+GrayGelfServer.prototype.unref = function () {
+  this._udp.unref()
+  this._chunkInterval.unref()
   return this
 }
 
 GrayGelfServer.prototype.close = function () {
   this._udp.close()
   this._udp = null
-  this._listening = false
-  this.emit('close')
+  clearInterval(this._chunkInterval)
 }
 
 GrayGelfServer.prototype._checkExpired = function () {
@@ -76,10 +85,10 @@ GrayGelfServer.prototype._message = function (buf, details) {
 }
 
 GrayGelfServer.prototype._broadcast = function (er, buf) {
+  /* istanbul ignore next */
   if (er) return this.emit('error', er)
 
   var data = JSON.parse(buf.toString())
-  if (this.callback) this.callback(data)
   this.emit('message', data)
 }
 

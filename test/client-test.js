@@ -1,8 +1,8 @@
-var test = require('tape')
-var os = require('os')
+var test     = require('tape')
+var os       = require('os')
 var graygelf = require('../')
-var fs = require('fs')
-var join = require('path').join
+var fs       = require('fs')
+var join     = require('path').join
 
 test('graygelf', function (t) {
   var log = graygelf() // defaults
