@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "lodash.isplainobject": "^2.4.1",
+    "lodash.merge": "^2.4.1",
     "split": "^0.3.0",
     "tape": "^3.0.0"
   },

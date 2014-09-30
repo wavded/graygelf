@@ -1,6 +1,6 @@
 # GrayGelf [![Build Status](https://secure.travis-ci.org/wavded/graygelf.svg)](http://travis-ci.org/wavded/graygelf)
 
-GrayLog2 GELF UDP logging, streaming, chunking, and more.  Production tested.  Includes client and server implementations.  AFAIK a complete [GELF](http://graylog2.org/gelf#specs) implementation.  Node Core style server and client.
+GrayLog2 GELF UDP logging, streaming, chunking, and more.  Production tested.  Includes client and server implementations.  AFAIK a complete [GELF](http://graylog2.org/gelf#specs) implementatio
 
 ![GrayGelf](https://raw.github.com/wavded/graygelf/master/graygelf.png)
 
@@ -12,66 +12,123 @@ npm install graygelf
 
 [![NPM](https://nodei.co/npm/graygelf.png?downloads=true)](https://nodei.co/npm/graygelf)
 
-## Client (i.e. as a UDP-based logging tool)
-
-### Usage
+## Example
 
 ```js
-var graygelf = require('graygelf')
-var logger = graygelf.createClient({ host: 'graylog.server.local', facility: 'sample_facility'})
-logger.on('error', console.error) // is an EventEmitter
+var log = require('graygelf')('graylog.server.local')
+log.on('message', console.log) // output messages to console
 
-logger.info('Howdy GrayLog')
-logger.error('oh no', new Error('bad news'))
-logger.log('emerg', 'noes')
+// setup global custom fields to be passed with every message --> converted to '_' fields
+log.fields.facility = 'redicomps'
+
+// printf style "hello world"
+log.info('hello %s', 'world')
+
+// concat by space style "hello world"
+log.info('hello', 'world')
+
+// include a full message and custom fields using .a
+log.info.a('short', 'full', { foo: 'bar' })
+log.info.a('short', 'full', { foo: 'bar' })
+
+// if an Error is passed as the only argument...
+var er = new Error('oh no!')
+log.info(er)
+// ... it expands to:
+log.info.a(er.message, er.stack)
+
+// writable streams can be created
+var infostream = log.stream('info')
+var rstream = require('fs').createReadStream(__filename)
+rstream.pipe(infostream) // lines automatically split up and sent seperately
+
+// raw gelf, version, host, and timestamp will be supplied if missing
+log.raw({
+  // version: '1.1',
+  // host: 'wavded',
+  short_message: 'oh no!',
+  full_message: 'howdy',
+  // timestamp: 1412087767.704356,
+  level: 6,
+  _foo: 'bar'
+})
 ```
 
-### Available Options
+## Setup
 
-```
-host: (graylog host)
-port: (graylog port)
-facility: (graylog facility - optional for GELF 1.1)
-chunkSize: (size of chunked messages in bytes, defaults to 1240)
-compressType: (type of compression: 'gzip' or 'deflate', defaults to 'deflate')
-mock: (mock a UDP client (no UDP client is actually used -- for testing or development enviroments), defaults to false)
-```
-
-### Syslog Levels
-
-GrayGelf maps the syslog levels to functions as follows:
+By `host` string (uses defaults below for other options):
 
 ```js
-logger.emerg(...)  // 0 - alias: panic
-logger.alert(...)  // 1
-logger.crit(...)   // 2
-logger.error(...)  // 3 - alias: err
-logger.warn(...)   // 4 - alias: warning
-logger.notice(...) // 5
-logger.info(...)   // 6
-logger.debug(...)  // 7
+var log = require('graygelf')('graylog.server.local')
 ```
 
-Each logger function takes two parameters which can be of any type but typically `(string, object)`.
-
-### Chunked Messages
-
-GrayGelf automatically sends chunked messages when a message gets above a certain size:
+By `options` object:
 
 ```js
-logger.chunkSize = 10 // in bytes; defaults to 1240
-logger.emerg('some thing more than 10 bytes', 'more detail')
+var log = require('graygelf'){{
+  host: 'graylog.server.local',
+  port: 23923
+})
 ```
 
-### Streaming Messages
+Available `options` are:
 
-Each log level has an associated writeable stream `.stream` that can be used to pipe data into
+```
+host
+  - graylog host (default: 'localhost')
+port
+  - graylog port (default: 12201)
+chunkSize
+  - size of chunked messages in bytes (default: 1240)
+compressType
+  - compression 'gzip' or 'deflate' (default: 'deflate')
+mock
+  - don't send messages to GrayLog2 (default: false)
+```
+
+## API
+
+### log[level]
+GrayGelf maps the syslog levels to functions.  All functions have the same semantics as `console.log` in Node (e.g. printf style, concat by space):
 
 ```js
-fs.createReadStream('./data').pipe(logger.stream.info)
+log.emerg(...)  // 0 - alias: panic
+log.alert(...)  // 1
+log.crit(...)   // 2
+log.error(...)  // 3 - alias: err
+log.warn(...)   // 4 - alias: warning
+log.notice(...) // 5
+log.info(...)   // 6
+log.debug(...)  // 7
 ```
 
-## Server (make your own GrayLog UDP server or intercept messages to GrayLog)
+### log[level].a
+
+There also is an `a(ttach)` method to include a full message.
+
+```js
+log.crit.a('short message', 'full message')
+```
+
+The `a(ttach)` method can have an optional third argument to define custom fields that will be passed to Graylog2 (creating addition search points and columns)
+
+```js
+log.info.a('short message', 'full message', { custom, 'field' })
+```
+
+### log.stream
+
+Create a writable stream to pipe log messages into:
+
+```js
+var stream = log.stream('info')
+```
+
+Streams automatically break lines up and pass each line to GrayLog2 at the specified level.
+
+## Server
+
+Make your own GrayLog UDP server or proxy messages to GrayLog
 
 ### Usage (callback style)
 
