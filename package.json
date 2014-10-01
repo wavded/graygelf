@@ -1,7 +1,7 @@
 {
   "name": "graygelf",
-  "version": "0.6.0",
-  "description": "Fully compliant GELF/Graylog2 client and server",
+  "version": "1.0.0",
+  "description": "A complete GELF client, server, and proxy for Graylog2",
   "main": "index.js",
   "scripts": {
     "test": "istanbul cover tape \"test/**/*-test.js\"",
@@ -9,26 +9,28 @@
     "ci-test": "istanbul cover tape \"test/**/*-test.js\" > test.tap && istanbul report clover"
   },
   "keywords": [
+    "logging",
     "graylog2",
     "gelf",
     "client",
-    "server"
+    "server",
+    "proxy"
   ],
   "author": "Marc Harter <wavded@gmail.com>",
   "license": "MIT",
+  "dependencies": {
+    "split": "^0.3.0"
+  },
   "devDependencies": {
     "eslint": "^0.8.2",
     "istanbul": "^0.3.2",
     "mocha": "1.16.2",
     "tape": "^3.0.0"
   },
-  "engines": {
-    "node": ">= 0.10.0"
-  },
-  "dependencies": {
-    "split": "^0.3.0"
-  },
   "optionalDependencies": {
     "microtime": "^1.0.1"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
   }
 }
