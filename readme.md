@@ -18,7 +18,7 @@ npm install graygelf
 var log = require('graygelf')('graylog.server.local')
 log.on('message', console.log) // output messages to console
 
-// setup global custom fields to be passed with every message --> converted to '_' fields
+// setup global custom fields to be passed with every message
 log.fields.facility = 'redicomps'
 
 // printf style "hello world"
@@ -104,7 +104,7 @@ log.on('message', function (gelf) {
 
 ### log.fields
 
-Add global custom fields to be included in every message.
+Add global custom fields to be included in every message.  Custom fields allow you to more interesting searches and sorting inside GrayLog2 servers.
 
 ```js
 log.fields.facility = 'facility'
