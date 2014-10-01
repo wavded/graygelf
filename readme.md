@@ -212,16 +212,10 @@ Allow the Node process to terminate if the server is the only thing keeping it a
 ### server.pipe(client)
 
 ```js
-var server = require('graygelf/server')()
-var client = require('graygelf')()
+var server = require('graygelf/server')().listen()
+var client = require('graygelf')('proxy-dest.graylog.local')
 
 server.pipe(client) // establish proxy (straight UDP transfer)
-
-server.on('message', function (gelf) { // intercept JSON parsed messages
-  console.log(gelf.short_message) // 'hi from the client'
-})
-
-client.info('hi from the client')
 ```
 
 ## License
