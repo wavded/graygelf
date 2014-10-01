@@ -1,4 +1,18 @@
 
+1.0.0 / 2014-09-30
+==================
+
+ * THIS IS A BREAKING RELEASE.  Please consult the updated documentation.
+
+ * add; new simplier client and server apis
+ * add; support for console.log style client logging
+ * add; support for raw gelf messages from client
+ * add; support for Error objects
+ * add; support for global custom fields
+ * add; clearer api for per-message custom fields
+ * add; line by line parsing of streams for client
+ * add; unref() for servers
+
 0.6.0 / 2014-09-29
 ==================
 
