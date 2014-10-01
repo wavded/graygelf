@@ -27,7 +27,7 @@ log.info('hello %s', 'world')
 // concat by space style "hello world"
 log.info('hello', 'world')
 
-// include a full message and custom fields using .a
+// include a full message and custom fields using .a(ttach)
 log.info.a('short', 'full', { foo: 'bar' })
 log.info.a('short', 'full', { foo: 'bar' })
 
@@ -88,6 +88,20 @@ mock
 
 ## API
 
+### event: error
+
+Emits errors that may occur while parsing and sending GELF messages.
+
+### event: message
+
+Emits GELF JSON messages that will be send over UDP.  Useful for redirecting output to stdout in development.
+
+```js
+log.on('message', function (gelf) {
+  console.log(gelf.level, gelf.short_message, gelf.long_message)
+})
+```
+
 ### log.fields
 
 Add global custom fields to be included in every message.
@@ -98,22 +112,22 @@ log.fields.facility = 'facility'
 
 Note: `fields` is plain JavaScript object.
 
-### log\[level\](message)
+### log{level}(message)
 
-GrayGelf maps the syslog levels to functions.  All functions have the same semantics as `console.log` (i.e. printf style, concat by space):
+GrayGelf maps the syslog levels to functions.  All functions have the same semantics as `console.log` (i.e. [printf style](http://nodejs.org/api/util.html#util_util_format_format)):
 
 ```js
-log.emerg(...)  // 0 - alias: panic
-log.alert(...)  // 1
-log.crit(...)   // 2
-log.error(...)  // 3 - alias: err
-log.warn(...)   // 4 - alias: warning
-log.notice(...) // 5
-log.info(...)   // 6
-log.debug(...)  // 7
+log.emerg('oh %s', 's*#t')              // 0 - alias: panic
+log.alert('act', 'immediately')         // 1
+log.crit('act %j', [ 'really soon' ])   // 2
+log.error('expected %d, got %d', 1, 5)  // 3 - alias: err
+log.warn('take note, it may bite')      // 4 - alias: warning
+log.notice('unusual %s', 'behavior')    // 5
+log.info('hello', 'world')              // 6
+log.debug('value is', a)                // 7
 ```
 
-### log[level].a(short, long, custom)
+### log{level}.a(short, long, custom)
 
 There also is an `a(ttach)` method to include a full message.
 
@@ -157,46 +171,57 @@ Note: No global custom fields (`log.fields`) are included when using `log.raw`.
 
 ## Server
 
-Make your own GrayLog UDP server or proxy messages to GrayLog
+Make your own GrayLog UDP server or proxy messages to GrayLog.  A GrayGelf server handles `zlib`, `gzip` and GELF chunked messages.
 
-### Usage (callback style)
+### Example
 
 ```js
-var server = graygelf.createServer(function (msg) {
-  console.log('recieved message', msg)
+var gelfserver = require('graylog/server')
+var server = gelfserver()
+server.on('message', function (gelf) {
+  // handle parsed gelf json
+  console.log('received message', msg)
 })
-server.on('error', console.error)
 server.listen(12201)
 ```
 
-### Usage (evented style)
+### event: message
+
+Emits parsed GELF JSON messages.
+
+### event: data
+
+Emits raw GELF buffers (useful for proxying).
+
+### event: error
+
+Emits errors captured from udp or parsing.
+
+### server.listen(port = 12201, address = "0.0.0.0")
+
+Start listening on a port and bind address.  Both parameters are optional. Defaults to typical GrayLog2 server defaults.
+
+### server.close()
+
+Close down a server and stop receiving messages.
+
+### server.unref()
+
+Allow the Node process to terminate if the server is the only thing keeping it alive.
+
+### server.pipe(client)
 
 ```js
-var server = graygelf.createServer().listen() // defaults to GrayLog2 port 12201
-server.on('message', function (msg) {
-  console.log('received message', msg)
-})
-server.on('error', console.error)
-```
+var server = require('graygelf/server')()
+var client = require('graygelf')()
 
-### Message Support
+server.pipe(client) // establish proxy (straight UDP transfer)
 
-GrayGelf handles `zlib`, `gzip` and chunked messages when a message gets above a certain size.
-
-### Efficient GrayLog Proxy and Interceptor
-
-```js
-var server = graygelf.createServer().listen(12202) // receive messages here
-var client = graygelf.createClient({ host: 'other.server.local', port: 12201 }) // send messages here
-
-server.pipe(client) // establish proxy (straight UDP transfer, no JSON parsing)
-
-server.on('message', function (msg) { // intercept JSON parsed messages
-  console.log('received message', msg)
+server.on('message', function (gelf) { // intercept JSON parsed messages
+  console.log(gelf.short_message) // 'hi from the client'
 })
 
-client.on('error', console.error)
-server.on('error', console.error)
+client.info('hi from the client')
 ```
 
 ## License
