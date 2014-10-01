@@ -86,7 +86,15 @@ test('log[level]', function (t) {
   t.equal(gelf.short_message, 'oh no', 'stores er.message as short_message')
   t.equal(gelf.level, 2, 'sets level 2')
   t.ok(/client-test.js/.test(gelf.full_message), 'stores stack a full_message')
-  t.end()
+
+  log.once('message', function (gelf) {
+    t.equal(gelf.short_message, 'oh no', 'alternate context')
+    t.ok(/client-test.js/.test(gelf.full_message), 'handles error case')
+    t.end()
+  })
+  var ee = new(require('events').EventEmitter)()
+  ee.on('error', log.crit)
+  ee.emit('error', new Error('oh no'))
 })
 
 test('log[level].a', function (t) {
