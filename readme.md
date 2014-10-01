@@ -27,6 +27,9 @@ log.info('hello %s', 'world')
 // concat by space style "hello world"
 log.info('hello', 'world')
 
+// stays context aware
+redis.on('error', log.error)
+
 // include a full message and custom fields using .a(ttach)
 log.info.a('short', 'full', { foo: 'bar' })
 log.info.a('short', 'full', { foo: 'bar' })
