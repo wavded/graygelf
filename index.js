@@ -11,7 +11,7 @@ var split  = require('split')
  */
 var timestamp
 try       { timestamp = require('microtime').nowDouble }
-catch (e) { timestamp = function () { return Date.now() / 1000 >> 0 } }
+catch (e) { timestamp = function () { return Date.now() / 1000.0 } }
 
 /**
  * Available logging levels
