@@ -1,6 +1,6 @@
-# GrayGelf [![Build Status](https://secure.travis-ci.org/wavded/graygelf.svg)](http://travis-ci.org/wavded/graygelf) [![Coverage Status](https://img.shields.io/coveralls/wavded/graygelf.svg)](https://coveralls.io/r/wavded/graygelf)
+# GrayGelf [![Build Status](https://secure.travis-ci.org/wavded/graygelf.svg)](http://travis-ci.org/wavded/graygelf) [![Coverage Status](https://coveralls.io/repos/github/wavded/graygelf/badge.svg?branch=master)](https://coveralls.io/github/wavded/graygelf?branch=master)
 
-GrayLog2 GELF UDP logging, streaming, chunking, and more.  Production tested.  Includes client and server implementations.  AFAIK a complete [GELF](http://graylog2.org/gelf#specs) implementation.
+GrayLog2 GELF UDP logging, streaming, chunking, and more. Production tested. Includes client and server implementations. AFAIK a complete [GELF](http://graylog2.org/gelf#specs) implementation.
 
 ![GrayGelf](https://raw.github.com/wavded/graygelf/master/graygelf.png)
 
@@ -14,7 +14,7 @@ npm install graygelf
 
 ## Example
 
-```js
+```javascript
 var log = require('graygelf')('graylog.server.local')
 log.on('message', console.log) // output messages to console
 
@@ -61,13 +61,13 @@ log.raw({
 
 By `host` string (uses defaults below for other options):
 
-```js
+```javascript
 var log = require('graygelf')('graylog.server.local')
 ```
 
 By `options` object:
 
-```js
+```javascript
 var log = require('graygelf'){{
   host: 'graylog.server.local',
   port: 23923
@@ -97,9 +97,9 @@ Emits errors that may occur while parsing and sending GELF messages.
 
 ### event: message
 
-Emits GELF JSON messages that will be send over UDP.  Useful for redirecting output to stdout in development.
+Emits GELF JSON messages that will be send over UDP. Useful for redirecting output to stdout in development.
 
-```js
+```javascript
 log.on('message', function (gelf) {
   console.log(gelf.level, gelf.short_message, gelf.long_message)
 })
@@ -107,9 +107,9 @@ log.on('message', function (gelf) {
 
 ### log.fields
 
-Add global custom fields to be included in every message.  Custom fields allow you to more interesting searches and sorting inside GrayLog2 servers.
+Add global custom fields to be included in every message. Custom fields allow you to more interesting searches and sorting inside GrayLog2 servers.
 
-```js
+```javascript
 log.fields.facility = 'facility'
 ```
 
@@ -117,9 +117,9 @@ Note: `fields` is plain JavaScript object.
 
 ### log{level}(message)
 
-GrayGelf maps the syslog levels to functions.  All functions have the same semantics as `console.log` (i.e. [printf style](http://nodejs.org/api/util.html#util_util_format_format)):
+GrayGelf maps the syslog levels to functions. All functions have the same semantics as `console.log` (i.e. [printf style](http://nodejs.org/api/util.html#util_util_format_format)):
 
-```js
+```javascript
 log.emerg('oh %s', 's*#t')              // 0 - alias: panic
 log.alert('act', 'immediately')         // 1
 log.crit('act %j', [ 'really soon' ])   // 2
@@ -134,13 +134,13 @@ log.debug('value is', a)                // 7
 
 There also is an `a(ttach)` method to include a full message.
 
-```js
+```javascript
 log.crit.a('short message', 'full message')
 ```
 
 The `a(ttach)` method can have an optional third argument to define custom fields that will be passed to Graylog2.
 
-```js
+```javascript
 log.info.a('short message', 'full message', { custom: 'field' })
 ```
 
@@ -148,7 +148,7 @@ log.info.a('short message', 'full message', { custom: 'field' })
 
 Create a writable stream to pipe log messages into:
 
-```js
+```javascript
 var stream = log.stream('info')
 ```
 
@@ -156,9 +156,9 @@ Streams automatically break lines up and pass each line to GrayLog2 at the speci
 
 ### log.raw(gelf)
 
-Pass a raw [GELF](http://www.graylog2.org/resources/gelf/specification) message.  The following fields will be populated if absent: `version`, `host`, and `timestamp`.
+Pass a raw [GELF](http://www.graylog2.org/resources/gelf/specification) message. The following fields will be populated if absent: `version`, `host`, and `timestamp`.
 
-```js
+```javascript
 log.raw({
   version: '1.1',
   host: 'wavded',
@@ -174,11 +174,11 @@ Note: No global custom fields (`log.fields`) are included when using `log.raw`.
 
 ## Server
 
-Make your own GrayLog UDP server or proxy messages to GrayLog.  A GrayGelf server handles `zlib`, `gzip` and GELF chunked messages.
+Make your own GrayLog UDP server or proxy messages to GrayLog. A GrayGelf server handles `zlib`, `gzip` and GELF chunked messages.
 
 ### Example
 
-```js
+```javascript
 var gelfserver = require('graygelf/server')
 var server = gelfserver()
 server.on('message', function (gelf) {
@@ -202,7 +202,7 @@ Emits errors captured from udp or parsing.
 
 ### server.listen(port = 12201, address = "0.0.0.0")
 
-Start listening on a port and bind address.  Both parameters are optional. Defaults to typical GrayLog2 server defaults.
+Start listening on a port and bind address. Both parameters are optional. Defaults to typical GrayLog2 server defaults.
 
 ### server.close()
 
@@ -214,7 +214,7 @@ Allow the Node process to terminate if the server is the only thing keeping it a
 
 ### server.pipe(client)
 
-```js
+```javascript
 var server = require('graygelf/server')().listen()
 var client = require('graygelf')('proxy-dest.graylog.local')
 
