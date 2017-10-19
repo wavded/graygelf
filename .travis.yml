@@ -4,4 +4,4 @@ node_js:
   - 6.0
   - 8.0
 script: "npm test && npm run lint"
-after_script: "npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls"
+after_script: "npm install coveralls@3 && cat ./coverage/lcov.info | coveralls"
