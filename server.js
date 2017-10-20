@@ -80,6 +80,9 @@ GrayGelfServer.prototype._message = function (buf, details) {
     case 0x1e: // chunked message
       this._handleChunk(buf)
       break
+    case 0x7b: // json message (not compressed)
+      this._broadcast(null, buf)
+      break;
     default:   // unknown message
   }
 }

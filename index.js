@@ -117,6 +117,12 @@ GrayGelf.prototype._send = function (gelf) {
   var gelfbuf = new Buffer(JSON.stringify(gelf))
   var graygelf = this
 
+  if (gelfbuf.length < graygelf.chunkSize) {
+    // The buffer fits within the nominal chunksize,
+    // so compression can be bypassed and sent directly
+    return graygelf.write(gelfbuf)
+  }
+
   zlib[this.compressType](gelfbuf, function (er, message) {
     /* istanbul ignore if */
     if (er) return graygelf.emit('error', er)

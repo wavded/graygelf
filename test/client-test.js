@@ -157,7 +157,21 @@ test('log.raw', function (t) {
   t.end()
 })
 
-test('log._send', function (t) {
+test('log._send (plain json)', function (t) {
+  t.plan(2)
+  var log = graygelf()
+
+  // overwrite for testing
+  log.write = function (chunk) {
+    t.ok(Buffer.isBuffer(chunk), 'should be a buffer')
+    t.equal(chunk[0], 0x7b, 'should fit within a single chunk as plain JSON')
+  }
+
+  var gelf = log._prepGelf(0, 'my message')
+  log._send(gelf)
+})
+
+test('log._send (deflate)', function (t) {
   t.plan(2)
   var log = graygelf()
 
@@ -167,7 +181,10 @@ test('log._send', function (t) {
     t.equal(chunk[0], 0x78, 'should include deflate header')
   }
 
-  var gelf = log._prepGelf(0, 'my message')
+  // Force the message to be too big to fit as simple JSON
+  // but not so large as to force splitting across multiple chunks
+  var full_message = Array(8192/16).fill(' 123456789abcdef').join('')
+  var gelf = log._prepGelf(0, 'my message', full_message)
   log._send(gelf)
 })
 
