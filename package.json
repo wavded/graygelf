@@ -18,6 +18,14 @@
   ],
   "author": "Marc Harter <wavded@gmail.com>",
   "license": "MIT",
+  "homepage": "https://github.com/wavded/graygelf#readme",
+  "bugs": {
+    "url": "https://github.com/wavded/graygelf/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/wavded/graygelf.git"
+  },
   "dependencies": {
     "split": "^0.3.0"
   },
