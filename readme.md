@@ -1,6 +1,6 @@
-[![NPM](https://img.shields.io/npm/v/ogr2ogr.svg)](https://npmjs.com/package/ogr2ogr) [![Build Status](https://secure.travis-ci.org/wavded/graygelf.svg)](http://travis-ci.org/wavded/graygelf) [![Coverage Status](https://coveralls.io/repos/github/wavded/graygelf/badge.svg?branch=master)](https://coveralls.io/github/wavded/graygelf?branch=master) [![code-style](https://img.shields.io/badge/code%20style-adc-brightgreen.svg?style=flat)](https://github.com/applieddataconsultants/eslint-config-adc)
+[![NPM](https://img.shields.io/npm/v/graygelf.svg)](https://npmjs.com/package/graygelf) [![Build Status](https://secure.travis-ci.org/wavded/graygelf.svg)](http://travis-ci.org/wavded/graygelf) [![Coverage Status](https://coveralls.io/repos/github/wavded/graygelf/badge.svg?branch=master)](https://coveralls.io/github/wavded/graygelf?branch=master) [![code-style](https://img.shields.io/badge/code%20style-adc-brightgreen.svg?style=flat)](https://github.com/applieddataconsultants/eslint-config-adc)
 
-GrayLog2 GELF UDP logging, streaming, chunking, and more. Production tested. Includes client and server implementations. AFAIK a complete [GELF](http://graylog2.org/gelf#specs) implementation.
+GrayLog2 GELF UDP logging, streaming, chunking, and more. Production hardened. Includes client and server implementations. AFAIK a complete [GELF](http://graylog2.org/gelf#specs) implementation.
 
 ![GrayGelf](https://raw.github.com/wavded/graygelf/master/graygelf.png)
 
