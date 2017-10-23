@@ -27,13 +27,13 @@
     "url": "git+ssh://git@github.com/wavded/graygelf.git"
   },
   "dependencies": {
-    "split": "^0.3.0"
+    "split": "^1.0.1"
   },
   "devDependencies": {
-    "eslint": "^0.8.2",
-    "istanbul": "^0.3.2",
-    "mocha": "1.16.2",
-    "tape": "^3.0.0"
+    "eslint": "^4.9.0",
+    "eslint-config-adc": "^2.0.0",
+    "istanbul": "^0.4.5",
+    "tape": "^4.8.0"
   },
   "optionalDependencies": {
     "microtime": "^2.0.1"

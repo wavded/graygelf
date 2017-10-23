@@ -1,20 +1,20 @@
-var zlib   = require('zlib')
-var dgram  = require('dgram')
+var zlib = require('zlib')
+var dgram = require('dgram')
 var Stream = require('stream')
 
-var GrayGelfServer = function () {
+var GrayGelfServer = function() {
   if (!(this instanceof GrayGelfServer)) {
     return new GrayGelfServer()
   }
 
   this.pendingChunks = Object.create(null)
-  this.readable      = true
+  this.readable = true
 }
 GrayGelfServer.prototype = Object.create(Stream.prototype)
 
-GrayGelfServer.prototype._checkError = function (er) { this.emit('error', er) }
+GrayGelfServer.prototype._checkError = function(er) { this.emit('error', er) }
 
-GrayGelfServer.prototype.listen = function (port, address) {
+GrayGelfServer.prototype.listen = function(port, address) {
   if (this._udp) throw new Error('GrayGelf is already listening on a port')
 
   this.port = port || 12201
@@ -30,31 +30,31 @@ GrayGelfServer.prototype.listen = function (port, address) {
   return this
 }
 
-GrayGelfServer.prototype.unref = function () {
+GrayGelfServer.prototype.unref = function() {
   this._udp.unref()
   this._chunkInterval.unref()
   return this
 }
 
-GrayGelfServer.prototype.close = function () {
+GrayGelfServer.prototype.close = function() {
   this._udp.close()
   this._udp = null
   clearInterval(this._chunkInterval)
 }
 
-GrayGelfServer.prototype._checkExpired = function () {
+GrayGelfServer.prototype._checkExpired = function() {
   var now = Date.now()
   for (var id in this.pendingChunks)
     if (now - this.pendingChunks[id].lastReceived >= 60000)
       delete this.pendingChunks[id]
 }
 
-GrayGelfServer.prototype._handleChunk = function (chunk) {
+GrayGelfServer.prototype._handleChunk = function(chunk) {
   var id = chunk.toString('ascii', 2, 8)
   var index = chunk[10]
   var total = chunk[11]
 
-  var chunks = this.pendingChunks[id] || { data: [] }
+  var chunks = this.pendingChunks[id] || {data: []}
   chunks.data[index] = chunk.slice(12) // store without chunk header
   chunks.lastReceived = Date.now()
 
@@ -67,27 +67,27 @@ GrayGelfServer.prototype._handleChunk = function (chunk) {
   }
 }
 
-GrayGelfServer.prototype._message = function (buf, details) {
+GrayGelfServer.prototype._message = function(buf, details) {
   if (details) this.emit('data', buf) // from udp.on('message')
 
   switch (buf[0]) {
-    case 0x78: // zlib (deflate) message
-      zlib.inflate(buf, this._broadcast.bind(this))
-      break
-    case 0x1f: // gzip message
-      zlib.gunzip(buf, this._broadcast.bind(this))
-      break
-    case 0x1e: // chunked message
-      this._handleChunk(buf)
-      break
-    case 0x7b: // json message (not compressed)
-      this._broadcast(null, buf)
-      break;
-    default:   // unknown message
+  case 0x78: // zlib (deflate) message
+    zlib.inflate(buf, this._broadcast.bind(this))
+    break
+  case 0x1f: // gzip message
+    zlib.gunzip(buf, this._broadcast.bind(this))
+    break
+  case 0x1e: // chunked message
+    this._handleChunk(buf)
+    break
+  case 0x7b: // json message (not compressed)
+    this._broadcast(null, buf)
+    break
+  default: // unknown message
   }
 }
 
-GrayGelfServer.prototype._broadcast = function (er, buf) {
+GrayGelfServer.prototype._broadcast = function(er, buf) {
   /* istanbul ignore next */
   if (er) return this.emit('error', er)
 
