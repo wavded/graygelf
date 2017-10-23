@@ -35,7 +35,7 @@ test('serve.on("error")', function (t) {
   serve._udp.emit('error', 'oh no')
 })
 
-test('serve.on("message")', function (t) {
+test('serve.on("message") (plain)', function (t) {
   var serve = gelfserver().listen()
   var log = graygelf()
 
@@ -46,6 +46,24 @@ test('serve.on("message")', function (t) {
   })
 
   log.emerg('my message')
+})
+
+test('serve.on("message") (deflate)', function (t) {
+  var full_message = Array(8192/16).fill(' 123456789abcdef').join('')
+  var serve = gelfserver().listen()
+  var log = graygelf()
+
+  serve.once('message', function (gelf) {
+    t.equal(gelf.short_message, 'my message', 'should include gelf message')
+    t.equal(gelf.full_message, full_message, 'should include gelf full message')
+    serve.close()
+    t.end()
+  })
+
+  // Force the message to be too big to fit as simple JSON
+  // but not so large as to force splitting across multiple chunks
+  var gelf = log._prepGelf(0, 'my message', full_message)
+  log._send(gelf)
 })
 
 test('serve.on("message") (chunked)', function (t) {
