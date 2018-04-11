@@ -83,6 +83,8 @@ chunkSize
   - size of chunked messages in bytes (default: 1240)
 compressType
   - compression 'gzip' or 'deflate' (default: 'deflate')
+alwaysCompress
+  - whether to always compress or go by chunkSize (default: false)
 mock
   - don't send messages to GrayLog2 (default: false)
 ```

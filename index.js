@@ -47,6 +47,7 @@ var GrayGelf = function(opts) {
 
   this.chunkSize = opts.chunkSize || GrayGelf.CHUNK_WAN
   this.compressType = (opts.compressType || '') === 'gzip' ? 'gzip' : 'deflate'
+  this.alwaysCompress = opts.alwaysCompress || false
   this.hostname = os.hostname()
 
   if (!opts.mock) {
@@ -117,7 +118,7 @@ GrayGelf.prototype._send = function(gelf) {
   var gelfbuf = new Buffer(JSON.stringify(gelf))
   var graygelf = this
 
-  if (gelfbuf.length < graygelf.chunkSize) {
+  if (gelfbuf.length < graygelf.chunkSize && !graygelf.alwaysCompress) {
     // The buffer fits within the nominal chunksize,
     // so compression can be bypassed and sent directly
     return graygelf.write(gelfbuf)
