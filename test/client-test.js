@@ -10,6 +10,7 @@ test('graygelf', function(t) {
   t.equal(log.graylogPort, 12201)
   t.equal(log.compressType, 'deflate')
   t.equal(log.chunkSize, 1240)
+  t.equal(log.alwaysCompress, false)
   t.ok(log._udp, 'set up a udp client')
 
   var loghost = graygelf('a.server.yo')
@@ -20,11 +21,13 @@ test('graygelf', function(t) {
     port: 23232,
     compressType: 'gzip',
     chunkSize: 10,
+    alwaysCompress: true,
   })
   t.equal(logopts.graylogHost, 'word')
   t.equal(logopts.graylogPort, 23232)
   t.equal(logopts.compressType, 'gzip')
   t.equal(logopts.chunkSize, 10)
+  t.equal(logopts.alwaysCompress, true)
 
   var logmock = graygelf({mock: true})
   t.ok(!logmock._udp, 'does not set up a udp client')
@@ -188,6 +191,24 @@ test('log._send (deflate)', function(t) {
   log._send(gelf)
 })
 
+test('log._send (gzip)', function(t) {
+  t.plan(2)
+  var log = graygelf()
+  log.compressType = 'gzip'
+
+  // overwrite for testing
+  log.write = function(chunk) {
+    t.ok(Buffer.isBuffer(chunk), 'should be a buffer')
+    t.equal(chunk[0], 0x1f, 'should include gzip header')
+  }
+
+  // Force the message to be too big to fit as simple JSON
+  // but not so large as to force splitting across multiple chunks
+  var full_message = Array(8192 / 16).fill(' 123456789abcdef').join('')
+  var gelf = log._prepGelf(0, 'my message', full_message)
+  log._send(gelf)
+})
+
 test('log._send (chunked)', function(t) {
   var log = graygelf()
   log.chunkSize = 100
@@ -202,6 +223,39 @@ test('log._send (chunked)', function(t) {
     t.equal(chunk[10], index++, 'should have index number')
     t.equal(chunk[11], expectedChunks, 'should have total number')
     if (index === expectedChunks) t.end()
+  }
+
+  var gelf = log._prepGelf(0, 'my message', 'full message', {extra: 'field'})
+  log._send(gelf)
+})
+
+test('log._send (gzip, alwaysCompress: false)', function(t) {
+  t.plan(2)
+  var log = graygelf()
+  log.chunkSize = 500
+  log.compressType = 'gzip'
+
+  // overwrite for testing
+  log.write = function(chunk) {
+    t.ok(Buffer.isBuffer(chunk), 'should be a buffer')
+    t.equal(chunk[0], 0x7b, 'should skip compression if it can fit in single message')
+  }
+
+  var gelf = log._prepGelf(0, 'my message', 'full message', {extra: 'field'})
+  log._send(gelf)
+})
+
+test('log._send (gzip, alwaysCompress: true)', function(t) {
+  t.plan(2)
+  var log = graygelf()
+  log.chunkSize = 500
+  log.compressType = 'gzip'
+  log.alwaysCompress = true
+
+  // overwrite for testing
+  log.write = function(chunk) {
+    t.ok(Buffer.isBuffer(chunk), 'should be a buffer')
+    t.equal(chunk[0], 0x1f, 'should include gzip header')
   }
 
   var gelf = log._prepGelf(0, 'my message', 'full message', {extra: 'field'})
