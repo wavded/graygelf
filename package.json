@@ -1,6 +1,6 @@
 {
   "name": "graygelf",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A complete GELF client, server, and proxy for Graylog2",
   "main": "index.js",
   "scripts": {
