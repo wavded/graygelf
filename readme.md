@@ -66,7 +66,7 @@ var log = require('graygelf')('graylog.server.local')
 By `options` object:
 
 ```javascript
-var log = require('graygelf'){{
+var log = require('graygelf')({
   host: 'graylog.server.local',
   port: 23923
 })
