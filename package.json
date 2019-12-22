@@ -1,6 +1,6 @@
 {
   "name": "graygelf",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "A complete GELF client, server, and proxy for Graylog2",
   "main": "index.js",
   "scripts": {
@@ -38,6 +38,6 @@
     "microtime": "^3.0.0"
   },
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 10.0"
   }
 }
