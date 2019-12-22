@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "istanbul cover tape \"test/**/*-test.js\"",
-    "lint": "eslint --no-ignore test serve.js index.js",
-    "ci-test": "istanbul cover tape \"test/**/*-test.js\" > test.tap && istanbul report clover"
+    "lint": "eslint --no-ignore test server.js index.js"
   },
   "keywords": [
     "logging",
@@ -30,7 +29,7 @@
     "split": "^1.0.1"
   },
   "devDependencies": {
-    "eslint": "^4.9.0",
+    "eslint": "^6.8.0",
     "eslint-config-adc": "^2.0.0",
     "istanbul": "^0.4.5",
     "tape": "^4.8.0"
